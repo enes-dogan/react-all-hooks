@@ -1,8 +1,6 @@
-import './Card.css';
+import { CardProps } from '../../types';
 
-interface CardProps {
-  children: React.ReactNode;
-}
+import './Card.css';
 
 const Card: React.FC<CardProps> = ({ children }) => {
   return <div className="card">{children}</div>;
