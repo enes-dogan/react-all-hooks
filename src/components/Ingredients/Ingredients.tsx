@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import { Ingredient } from '../../types';
 
@@ -8,26 +8,27 @@ import IngredientList from './IngredientList';
 
 const Ingredients = () => {
   const [userIngredients, setUserIngredients] = useState<Ingredient[]>([]);
+  
+  //? Unnecessary because we make a initial fetch in <Search /> component already if there is no query
+  // useEffect(() => {// useEffect() gets executed after component render
+  //   fetch('https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients.json').then(response => response.json()
+  //   ).then(responseData => { // responseData is an object because of firebase returns as an object
+  //     const loadedIngredients = [];
+  //     for (const key in responseData) {
+  //       loadedIngredients.push({
+  //         id: key,
+  //         title: responseData[key].ingredient.title,
+  //         amount: responseData[key].ingredient.amount,
+  //       });
+  //     }
+  //     setUserIngredients(loadedIngredients);
+  //   })
+  // }, []);
 
-  useEffect(() => {// useEffect() gets executed after component render
-    fetch('https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients.json').then(response => response.json()
-    ).then(responseData => { // responseData is an object because of firebase returns as an object
-      const loadedIngredients = [];
-      for (const key in responseData) {
-        loadedIngredients.push({
-          id: key,
-          title: responseData[key].ingredient.title,
-          amount: responseData[key].ingredient.amount,
-        });
-      }
-      setUserIngredients(loadedIngredients);
-    })
-  }, []);
-
-  const filteredIngredientsHandler = (filteredIngredients: Ingredient[]) => {
+  const filteredIngredientsHandler = useCallback((filteredIngredients: Ingredient[]) => {
     setUserIngredients(filteredIngredients);
-  }
-
+  }, []);
+  // useCallback() is caches the function passed as an argument and it survives re-renders thus function not re-created
   const addIngredientHandler = (ingredient: { title: string; amount: string }) => {
     fetch('https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients.json', {
       method: 'POST',
