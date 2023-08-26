@@ -21,3 +21,7 @@ export interface Ingredient {
   title: string;
   amount: string;
 }
+
+export interface SearchProps {
+  onLoadedIngredients: (loadedIngredients: Ingredient[]) => void;
+}

@@ -13,6 +13,8 @@ const IngredientForm: React.FC<IngredientFormProps> = React.memo(({ onAddIngredi
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
     onAddIngredient({ title: enteredTitle, amount: enteredAmount });
+    setEnteredAmount('');
+    setEnteredTitle('');
   };
 
   return (
