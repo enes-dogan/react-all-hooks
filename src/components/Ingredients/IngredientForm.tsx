@@ -5,8 +5,9 @@ import { IngredientFormProps } from '../../types';
 
 import Card from '../UI/Card';
 import './IngredientForm.css';
+import LoadingIndicator from '../UI/LoadingIndicator';
 
-const IngredientForm: React.FC<IngredientFormProps> = React.memo(({ onAddIngredient }) => {
+const IngredientForm: React.FC<IngredientFormProps> = React.memo(({ onAddIngredient, loading }) => {
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
 
@@ -33,6 +34,7 @@ const IngredientForm: React.FC<IngredientFormProps> = React.memo(({ onAddIngredi
           </div>
           <div className="ingredient-form__actions">
             <button type="submit">Add Ingredient</button>
+            {loading && <LoadingIndicator />}
           </div>
         </form>
       </Card>

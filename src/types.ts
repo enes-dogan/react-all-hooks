@@ -1,5 +1,6 @@
 export interface IngredientFormProps {
   onAddIngredient: (ingredient: { title: string; amount: string }) => void;
+  loading: boolean;
 }
 
 export interface ErrorModalProps {
