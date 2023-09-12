@@ -1,4 +1,4 @@
-import { useState, useReducer, useCallback } from 'react';
+import { useEffect, useReducer, useCallback } from 'react';
 
 import { Ingredient } from '../../types';
 
@@ -18,14 +18,36 @@ const ingredientReducer = (currentIngredients, action) => {
     default:
       throw new Error('No case defined.');
   }
-}
+};
+
+const httpReducer = (curHttpState, action) => {
+  switch (action.type) {
+    case 'SEND':
+      return { loading: true, error: null };
+    case 'RESPONSE':
+      return { ...curHttpState, loading: false }; //speading the state obj and overwritting/changing only loading property
+    case 'ERROR':
+      return { loading: false, error: action.errorMessage };
+    case 'CLEAR':
+      return { ...curHttpState, error: null };
+    default:
+      throw new Error('No case defined.');
+  }
+};
 
 const Ingredients = () => {
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
+  const [httpState, dispatchHttp] = useReducer(httpReducer, {
+    loading: false,
+    error: null
+  });
   // const [userIngredients, setUserIngredients] = useState<Ingredient[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  //! const [isLoading, setIsLoading] = useState(false);
+  //! const [error, setError] = useState('');
 
+  useEffect(() => {
+    console.log('RENDERING INGREDIENTS', userIngredients);
+  }, [userIngredients]);
   //? ***
   // Unnecessary because we make a initial fetch in <Search /> component already if there is no query
   // useEffect(() => {// useEffect() gets executed after component render
@@ -47,61 +69,60 @@ const Ingredients = () => {
     //TODO setUserIngredients(filteredIngredients);
     dispatch({ type: 'SET', ingredients: filteredIngredients });
   }, []);
-  // useCallback() is caches the function passed as an argument and it survives re-renders thus function not re-created
+  // useCallback() is caches the function passed and it survives re-renders/function not re-created
   const addIngredientHandler = (ingredient: { title: string; amount: string }) => {
-    setIsLoading(true);
-    setTimeout(() => {
-
-      fetch('https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients.json', {
-        method: 'POST',
-        body: JSON.stringify({ ingredient }),
-        headers: { 'Content-Type': 'application/json' }
-      }).then(response => {
-        setIsLoading(false);
-        return response.json() // turns response coming from the firebase to javascript object
-      }).then(responseData => { /*name inside the incoming response is a unique id (given by Firebase) */
-        // setUserIngredients(prevUserIngredients => [
-        //   ...prevUserIngredients,
-        //   { id: responseData.name, ...ingredient },
-        // ]);
-        dispatch({ type: 'ADD', ingredient: { id: responseData.name, ...ingredient } });
-      }).catch(err => {
-        setError('Something went wrong!');
-        console.log(err);
+    //! setIsLoading(true);
+    dispatchHttp({ type: 'SEND' });
+    fetch('https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients.json', {
+      method: 'POST',
+      body: JSON.stringify({ ingredient }),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(response => {
+      //! setIsLoading(false);
+      dispatchHttp({ type: 'RESPONSE' });
+      return response.json(); // turns response coming from the firebase to javascript object
+    }).then(responseData => { /*name inside the incoming response is a unique id (given by Firebase) */
+      // setUserIngredients(prevUserIngredients => [
+      //   ...prevUserIngredients,
+      //   { id: responseData.name, ...ingredient },
+      // ]);
+      dispatch({
+        type: 'ADD',
+        ingredient: { id: responseData.name, ...ingredient }
       });
-    }, 1000);
+    });
   };
 
   const removeIngredientHandler = (ingredientId: string) => {
-    setIsLoading(true);
+    //! setIsLoading(true);
+    dispatchHttp({ type: 'SEND' });
     fetch(`https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients/${ingredientId}.json`, {
       method: 'DELETE',
-    }).then(response => {
-      setIsLoading(false);
-      if (response.ok) {
-        console.log(`Item with ID ${ingredientId} deleted successfully.`);
-      } else {
-        console.error(`Failed to delete item with ID ${ingredientId}`);
-      }
-      // setUserIngredients(prevUserIngredients =>
-      //   prevUserIngredients.filter(ingredient => ingredient.id !== ingredientId)
-      // );
-      dispatch({ type: 'DELETE', id: ingredientId });
     })
+      .then(response => {
+        //! setIsLoading(false);
+        dispatchHttp({ type: 'RESPONSE' });
+        // setUserIngredients(prevUserIngredients =>
+        //   prevUserIngredients.filter(ingredient => ingredient.id !== ingredientId)
+        // );
+        dispatch({ type: 'DELETE', id: ingredientId });
+      })
+      .catch(error => {
+        dispatchHttp({ type: 'ERROR', errorMessage: 'Something went wrong!' });
+      });
   };
 
   const clearError = () => {
-    setError('');
-    setIsLoading(false);
-  }
+    dispatchHttp({ type: 'CLEAR' });
+  };
 
   return (
     <>
       <div className="App">
-        {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+        {httpState.error && <ErrorModal onClose={clearError}>{httpState.error}</ErrorModal>}
         <IngredientForm
           onAddIngredient={addIngredientHandler}
-          loading={isLoading} />
+          loading={httpState.loading} />
 
         <section>
           <Search onLoadedIngredients={filteredIngredientsHandler} />
@@ -110,6 +131,6 @@ const Ingredients = () => {
       </div>
     </>
   );
-}
+};
 
 export default Ingredients;
