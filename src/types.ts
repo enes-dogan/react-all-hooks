@@ -26,3 +26,8 @@ export interface Ingredient {
 export interface SearchProps {
   onLoadedIngredients: (loadedIngredients: Ingredient[]) => void;
 }
+
+export interface curHttpState {
+  loading: boolean;
+  error: boolean | null;
+}
