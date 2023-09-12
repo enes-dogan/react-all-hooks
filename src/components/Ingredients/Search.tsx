@@ -35,8 +35,8 @@ const Search = React.memo(({ onLoadedIngredients }: SearchProps) => {
     return () => {
       clearTimeout(timer);
     };
-  }, [onLoadedIngredients, enteredFilter, inputRef]); // We only want to run this func when onLoadedIngregients changes/executes
-
+  }, [onLoadedIngredients, enteredFilter, inputRef]);
+  // We only want to run this func when onLoadedIngregients changes/executes
   return (
     <section className="search">
       <Card>

@@ -1,14 +1,30 @@
-import { useState, useCallback } from 'react';
+import { useState, useReducer, useCallback } from 'react';
 
 import { Ingredient } from '../../types';
 
 import IngredientForm from './IngredientForm';
-import Search from './Search';
 import IngredientList from './IngredientList';
+import ErrorModal from '../UI/ErrorModal';
+import Search from './Search';
+
+const ingredientReducer = (currentIngredients, action) => {
+  switch (action.type) {
+    case 'SET':
+      return action.ingredients;
+    case 'ADD':
+      return [...currentIngredients, action.ingredient];
+    case 'DELETE':
+      return currentIngredients.filter(ing => ing.id !== action.id);
+    default:
+      throw new Error('No case defined.');
+  }
+}
 
 const Ingredients = () => {
-  const [userIngredients, setUserIngredients] = useState<Ingredient[]>([]);
+  const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
+  // const [userIngredients, setUserIngredients] = useState<Ingredient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   //? ***
   // Unnecessary because we make a initial fetch in <Search /> component already if there is no query
@@ -28,7 +44,8 @@ const Ingredients = () => {
   // }, []);
 
   const filteredIngredientsHandler = useCallback((filteredIngredients: Ingredient[]) => {
-    setUserIngredients(filteredIngredients);
+    //TODO setUserIngredients(filteredIngredients);
+    dispatch({ type: 'SET', ingredients: filteredIngredients });
   }, []);
   // useCallback() is caches the function passed as an argument and it survives re-renders thus function not re-created
   const addIngredientHandler = (ingredient: { title: string; amount: string }) => {
@@ -42,12 +59,16 @@ const Ingredients = () => {
       }).then(response => {
         setIsLoading(false);
         return response.json() // turns response coming from the firebase to javascript object
-      }).then(responseData => {
-        setUserIngredients(prevUserIngredients => [
-          ...prevUserIngredients,
-          { id: responseData.name, ...ingredient },
-        ]); // name inside the incoming response is a unique id (given by Firebase)
-      })
+      }).then(responseData => { /*name inside the incoming response is a unique id (given by Firebase) */
+        // setUserIngredients(prevUserIngredients => [
+        //   ...prevUserIngredients,
+        //   { id: responseData.name, ...ingredient },
+        // ]);
+        dispatch({ type: 'ADD', ingredient: { id: responseData.name, ...ingredient } });
+      }).catch(err => {
+        setError('Something went wrong!');
+        console.log(err);
+      });
     }, 1000);
   };
 
@@ -62,15 +83,22 @@ const Ingredients = () => {
       } else {
         console.error(`Failed to delete item with ID ${ingredientId}`);
       }
-      setUserIngredients(prevUserIngredients =>
-        prevUserIngredients.filter(ingredient => ingredient.id !== ingredientId)
-      );
+      // setUserIngredients(prevUserIngredients =>
+      //   prevUserIngredients.filter(ingredient => ingredient.id !== ingredientId)
+      // );
+      dispatch({ type: 'DELETE', id: ingredientId });
     })
   };
+
+  const clearError = () => {
+    setError('');
+    setIsLoading(false);
+  }
 
   return (
     <>
       <div className="App">
+        {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
         <IngredientForm
           onAddIngredient={addIngredientHandler}
           loading={isLoading} />

@@ -10,7 +10,7 @@ const IngredientList: React.FC<IngredientListProps> = ({ ingredients, onRemoveIt
       <h2>Loaded Ingredients</h2>
       <ul>
         {ingredients.map(ig => (
-          <li key={ig.id} onClick={onRemoveItem.bind(null, ig.id)}>
+          <li key={ig.id} onClick={onRemoveItem.bind(this, ig.id)}> {/*this or null what is the difference*/}
             <span>{ig.title}</span>
             <span>{ig.amount}x</span>
           </li>
