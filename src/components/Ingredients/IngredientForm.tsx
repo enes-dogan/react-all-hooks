@@ -25,12 +25,12 @@ const IngredientForm: React.FC<IngredientFormProps> = React.memo(({ onAddIngredi
           <div className="form-control">
             <label htmlFor="title">Name</label>
             <input type="text" id="title" value={enteredTitle}
-              onChange={e => setEnteredTitle(e.target.value)} />
+              onChange={e => setEnteredTitle(e.target.value)} required />
           </div>
           <div className="form-control">
             <label htmlFor="amount">Amount</label>
             <input type="number" id="amount" value={enteredAmount}
-              onChange={e => setEnteredAmount(e.target.value)} />
+              onChange={e => setEnteredAmount(e.target.value)} required />
           </div>
           <div className="ingredient-form__actions">
             <button type="submit">Add Ingredient</button>
