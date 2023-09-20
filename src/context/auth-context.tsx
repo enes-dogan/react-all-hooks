@@ -1,24 +1,23 @@
-// import React, { useState } from 'react';
+import React, { useState } from 'react';
 
-// export const AuthContext = React.createContext({
-//   isAuth: false,
-//   login: () => { }
-// });
+import { AuthContextProviderProps } from '../types';
 
-// const AuthContextProvider = props => {
-//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+export const AuthContext = React.createContext({
+  isAuth: false,
+  login: () => { }
+});
 
-//   const loginHandler = () => {
-//     setIsAuthenticated(true);
-//   };
+const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-//   return (
-//     <AuthContext.Provider
-//       value={{ login: loginHandler, isAuth: isAuthenticated }}
-//     >
-//       {props.children}
-//     </AuthContext.Provider>
-//   );
-// };
+  const loginHandler = () => {
+    setIsAuthenticated(true);
+  }
+  return (
+    <AuthContext.Provider value={{ login: loginHandler, isAuth: isAuthenticated }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
 
-// export default AuthContextProvider;
+export default AuthContextProvider

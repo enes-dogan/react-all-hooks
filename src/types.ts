@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface IngredientFormProps {
   onAddIngredient: (ingredient: { title: string; amount: string }) => void;
   loading: boolean;
@@ -29,5 +31,25 @@ export interface SearchProps {
 
 export interface curHttpState {
   loading: boolean;
-  error: boolean | null;
+  error: boolean | null | string;
 }
+
+export interface AuthContextProviderProps {
+  children: ReactNode;
+}
+
+export type IngredientAction =
+  | { type: 'SET'; ingredients: Ingredient[] }
+  | { type: 'ADD'; ingredient: Ingredient }
+  | { type: 'DELETE'; id: string };
+
+export type HttpAction =
+  | { type: 'SEND' }
+  | { type: 'RESPONSE' }
+  | { type: 'ERROR'; errorMessage: string }
+  | { type: 'CLEAR' };
+
+export type HttpReducerType = (
+  curHttpState: curHttpState,
+  action: HttpAction
+) => curHttpState;

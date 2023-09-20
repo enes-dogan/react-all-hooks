@@ -2,13 +2,17 @@ import { useReducer, useCallback } from 'react';
 
 import { Ingredient } from '../../types';
 import { curHttpState } from '../../types';
+import { IngredientAction } from '../../types';
+import { HttpAction } from '../../types';
+import { HttpReducerType } from '../../types';
 
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList';
 import ErrorModal from '../UI/ErrorModal';
 import Search from './Search';
 
-const ingredientReducer = (currentIngredients: Ingredient[], action) => {
+
+const ingredientReducer = (currentIngredients: Ingredient[], action: IngredientAction) => {
   switch (action.type) {
     case 'SET':
       return action.ingredients;
@@ -21,14 +25,14 @@ const ingredientReducer = (currentIngredients: Ingredient[], action) => {
   }
 };
 
-const httpReducer = (curHttpState: curHttpState, action) => {
+const httpReducer = (curHttpState: curHttpState, action: HttpAction): curHttpState => {
   switch (action.type) {
     case 'SEND':
       return { loading: true, error: null };
     case 'RESPONSE':
       return { ...curHttpState, loading: false };
     case 'ERROR':
-      console.log(curHttpState)
+      console.log(curHttpState);
       return { loading: false, error: action.errorMessage };
     case 'CLEAR':
       return { ...curHttpState, error: null };
@@ -37,9 +41,11 @@ const httpReducer = (curHttpState: curHttpState, action) => {
   }
 };
 
+
+
 const Ingredients = () => {
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
-  const [httpState, dispatchHttp] = useReducer(httpReducer, { loading: false, error: null });
+  const [httpState, dispatchHttp] = useReducer<HttpReducerType>(httpReducer, { loading: false, error: null });
 
   const filteredIngredientsHandler = useCallback((filteredIngredients: Ingredient[]) => {
     dispatch({ type: 'SET', ingredients: filteredIngredients });

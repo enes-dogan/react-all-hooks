@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import React from 'react';
 
 import { IngredientFormProps } from '../../types';
@@ -7,7 +7,7 @@ import Card from '../UI/Card';
 import './IngredientForm.css';
 import LoadingIndicator from '../UI/LoadingIndicator';
 
-const IngredientForm: React.FC<IngredientFormProps> = useCallback(React.memo(({ onAddIngredient, loading }) => {
+const IngredientForm: React.FC<IngredientFormProps> = (React.memo(({ onAddIngredient, loading }) => {
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
 
@@ -42,7 +42,7 @@ const IngredientForm: React.FC<IngredientFormProps> = useCallback(React.memo(({ 
       </Card>
     </section>
   );
-}), []
-)
+})
+);
 
 export default IngredientForm;
