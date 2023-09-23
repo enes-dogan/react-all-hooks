@@ -53,7 +53,7 @@ const Ingredients = () => {
 
   const addIngredientHandler = (ingredient: { title: string; amount: string }) => {
     dispatchHttp({ type: 'SEND' });
-    fetch('https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients.json', {
+    fetch('https://react-hooks-enes-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json', {
       method: 'POST',
       body: JSON.stringify({ ingredient }),
       headers: { 'Content-Type': 'application/json' }
@@ -70,7 +70,7 @@ const Ingredients = () => {
 
   const removeIngredientHandler = (ingredientId: string) => {
     dispatchHttp({ type: 'SEND' });
-    fetch(`https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients/${ingredientId}.json`, {
+    fetch(`https://react-hooks-enes-default-rtdb.europe-west1.firebasedatabase.app/ingredients/${ingredientId}.json`, {
       method: 'DELETE',
     })
       .then(response => {

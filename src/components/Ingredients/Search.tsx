@@ -15,7 +15,7 @@ const Search = React.memo(({ onLoadedIngredients }: SearchProps) => {
         const query =
           enteredFilter.length === 0 ? ''
             : `?orderBy="ingredient/title"&equalTo="${enteredFilter}"`;
-        fetch('https://react-hooks-45f20-default-rtdb.firebaseio.com/ingredients.json' + query)
+        fetch('https://react-hooks-enes-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json' + query)
           .then(response => response.json()
           ).then(responseData => {
             const loadedIngredients = [];
@@ -49,3 +49,14 @@ const Search = React.memo(({ onLoadedIngredients }: SearchProps) => {
 });
 
 export default Search;
+/*
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "ingredients": {
+      ".indexOn": ["ingredient/title"]
+    }
+  }
+}
+*/
