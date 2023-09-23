@@ -1,4 +1,4 @@
-import { useReducer, useCallback } from 'react';
+import { useReducer, useCallback, useMemo } from 'react';
 
 import { Ingredient } from '../../types';
 import { curHttpState } from '../../types';
@@ -51,7 +51,7 @@ const Ingredients = () => {
     dispatch({ type: 'SET', ingredients: filteredIngredients });
   }, []);
 
-  const addIngredientHandler = (ingredient: { title: string; amount: string }) => {
+  const addIngredientHandler = useCallback((ingredient: { title: string; amount: string }) => {
     dispatchHttp({ type: 'SEND' });
     fetch('https://react-hooks-enes-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json', {
       method: 'POST',
@@ -66,9 +66,9 @@ const Ingredients = () => {
         ingredient: { id: responseData.name, ...ingredient }
       });
     });
-  };
+  }, []);
 
-  const removeIngredientHandler = (ingredientId: string) => {
+  const removeIngredientHandler = useCallback((ingredientId: string) => {
     dispatchHttp({ type: 'SEND' });
     fetch(`https://react-hooks-enes-default-rtdb.europe-west1.firebasedatabase.app/ingredients/${ingredientId}.json`, {
       method: 'DELETE',
@@ -81,11 +81,15 @@ const Ingredients = () => {
       .catch(error => {
         dispatchHttp({ type: 'ERROR', errorMessage: `Something went wrong! ${error}` });
       });
-  };
+  }, []);
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     dispatchHttp({ type: 'CLEAR' });
-  };
+  }, []);
+
+  const ingredientList = useMemo(() => {
+    return <IngredientList ingredients={userIngredients} onRemoveItem={removeIngredientHandler} />
+  }, [userIngredients, removeIngredientHandler])
 
   return (
     <div className="App">
@@ -96,7 +100,7 @@ const Ingredients = () => {
 
       <section>
         <Search onLoadedIngredients={filteredIngredientsHandler} />
-        <IngredientList ingredients={userIngredients} onRemoveItem={removeIngredientHandler} />
+        {ingredientList}
       </section>
     </div>
   );

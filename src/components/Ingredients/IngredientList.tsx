@@ -4,7 +4,7 @@ import { IngredientListProps } from '../../types';
 
 import './IngredientList.css';
 
-const IngredientList: React.FC<IngredientListProps> = ({ ingredients, onRemoveItem }) => {
+const IngredientList: React.FC<IngredientListProps> = React.memo(({ ingredients, onRemoveItem }) => {
   return (
     <section className="ingredient-list">
       <h2>Loaded Ingredients</h2>
@@ -18,6 +18,6 @@ const IngredientList: React.FC<IngredientListProps> = ({ ingredients, onRemoveIt
       </ul>
     </section>
   )
-};
+});
 
 export default IngredientList;
