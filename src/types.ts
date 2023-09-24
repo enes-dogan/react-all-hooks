@@ -32,6 +32,8 @@ export interface SearchProps {
 export interface curHttpState {
   loading: boolean;
   error: boolean | null | string;
+  data: null; // TODO
+  extra: null; // TODO
 }
 
 export interface AuthContextProviderProps {

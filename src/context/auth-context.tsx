@@ -7,17 +7,21 @@ export const AuthContext = React.createContext({
   login: () => { }
 });
 
-const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
+const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
+  children,
+}) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const loginHandler = () => {
     setIsAuthenticated(true);
-  }
+  };
   return (
-    <AuthContext.Provider value={{ login: loginHandler, isAuth: isAuthenticated }}>
+    <AuthContext.Provider
+      value={{ login: loginHandler, isAuth: isAuthenticated }}
+    >
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
 export default AuthContextProvider;

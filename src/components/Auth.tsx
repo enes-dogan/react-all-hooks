@@ -5,13 +5,13 @@ import { AuthContext } from '../context/auth-context';
 import './Auth.css';
 
 const Auth = () => {
-  const authContext = useContext(AuthContext)
+  const authContext = useContext(AuthContext);
   const loginHandler = () => {
     authContext.login();
   };
 
   return (
-    <div className="auth">
+    <div className='auth'>
       <Card>
         <h2>You are not authenticated!</h2>
         <p>Please log in to continue.</p>
